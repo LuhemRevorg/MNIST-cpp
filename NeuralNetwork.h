@@ -10,6 +10,7 @@ class NeuralNetwork {
     public:
         NeuralNetwork();
         Matrix forward(const Matrix &input);
+        void backward(const Matrix &dz);
 
 };
 

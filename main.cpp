@@ -3,6 +3,13 @@
 #include "Matrix.h"
 #include "NeuralNetwork.h"
 
+Matrix one_hot(int lbl) {
+    Matrix result(10, 1);
+    result.zeroes();
+    result.vals[lbl] = 1.0;
+    return result;
+}
+
 
 int main() {
 
@@ -14,7 +21,9 @@ int main() {
 
     NeuralNetwork model = NeuralNetwork();
 
-    model.forward(train_data[0].img).print();
+    Matrix pred = model.forward(train_data[0].img);
+    Matrix dz = pred - one_hot(train_data[0].label);
+    model.backward(dz);
 
 
     

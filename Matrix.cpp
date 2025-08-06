@@ -31,6 +31,18 @@ void Matrix::random() {
 
 }
 
+Matrix Matrix::transpose() const {
+
+    Matrix result(n, m);  // flipped dimensions
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            result.vals[j * m + i] = vals[i * n + j];
+        }
+    }
+    return result;
+
+}
+
 Matrix ReLU(const Matrix &M) {
     Matrix output(M.m, M.n);
     for (int i = 0; i < M.m; ++i) {
@@ -41,28 +53,21 @@ Matrix ReLU(const Matrix &M) {
     return output;
 }
 
-Matrix softmax(const Matrix& M) {
-    if (M.n != 1) {
-        std::cerr << "Softmax error: input is not a column vector.\n";
-        return {};
-    }
+Matrix softmax(const Matrix &M) {
+    Matrix result(M.m, M.n);
 
-    int size = M.m;
-    Matrix result(M.m, 1);
+    // Find max value for numerical stability
+    double max_val = *std::max_element(M.vals.begin(), M.vals.end());
 
-    // To avoid overflow, subtract the max element
-    double max_val = M.vals[0];
-    for (int i = 1; i < size; ++i) {
-        if (M.vals[i] > max_val) max_val = M.vals[i];
-    }
-
+    // Compute exponentials
     double sum = 0.0;
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < M.m * M.n; ++i) {
         result.vals[i] = std::exp(M.vals[i] - max_val);
         sum += result.vals[i];
     }
 
-    for (int i = 0; i < size; ++i) {
+    // Normalize
+    for (int i = 0; i < M.m * M.n; ++i) {
         result.vals[i] /= sum;
     }
 
@@ -95,21 +100,74 @@ Matrix dot(const Matrix &M1, const Matrix &M2) {
 }
 
 
-Matrix operator+(const Matrix &M1, const Matrix &M2) {
+Matrix operator+(const Matrix& M1, const Matrix& M2) {
+    if (M1.m != M2.m || M1.n != M2.n) {
+        std::cerr << "Matrix + error: dimension mismatch\n";
+        std::exit(EXIT_FAILURE);  // or throw
+    }
 
     Matrix result(M1.m, M1.n);
+    for (int i = 0; i < M1.m * M1.n; ++i) {
+        result.vals[i] = M1.vals[i] + M2.vals[i];
+    }
+    return result;
+}
 
+Matrix operator/(const Matrix &M, float num) {
+    Matrix result = Matrix(M.m, M.n);
+    for(int i = 0; i < M.m; i++) {
+        for (int j =0; j < M.n; ++j) {
+            result.vals[i*M.n + j] = M.vals[i*M.n + j] / num;
+        }
+    }
+    return result;
+}
+
+Matrix deriv_ReLU(const Matrix &M) {
+    Matrix result = Matrix(M.m, M.n);
+    for(int i = 0; i < M.m; i++) {
+        for (int j =0; j < M.n; ++j) {
+            if (M.vals[i*M.n + j] > 0.0) {result.vals[i*M.n + j] = 1;}
+            else result.vals[i*M.n + j] = 0;
+        }
+    }
+    return result;
+}
+
+
+Matrix elementwise(const Matrix& M1, const Matrix& M2) {
+    if (M1.m != M2.m || M1.n != M2.n) {
+        std::cerr << "Elementwise error: dimension mismatch.\n";
+        return {};
+    }
+
+    Matrix result(M1.m, M1.n);
     for (int i = 0; i < M1.m; ++i) {
         for (int j = 0; j < M1.n; ++j) {
-            result.vals[i*M1.m + j] = M1.vals[i*M1.m + j] + M2.vals[i*M1.m + j];
+            int idx = i * M1.n + j;
+            result.vals[idx] = M1.vals[idx] * M2.vals[idx];
         }
     }
 
     return result;
-
 }
 
+Matrix operator-(const Matrix& M1, const Matrix& M2) {
+    if (M1.m != M2.m || M1.n != M2.n) {
+        std::cerr << "Matrix - error: dimension mismatch\n";
+        return {};
+    }
 
+    Matrix result(M1.m, M1.n);
+    for (int i = 0; i < M1.m; ++i) {
+        for (int j = 0; j < M1.n; ++j) {
+            int idx = i * M1.n + j;
+            result.vals[idx] = M1.vals[idx] - M2.vals[idx];
+        }
+    }
+
+    return result;
+}
 
 
 
