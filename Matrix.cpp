@@ -15,13 +15,15 @@ void Matrix::print(int precision) const {
     std::cout << std::endl;
 }
 
+Matrix::Matrix(int m , int n, vector<double> vals): m{m}, n{n}, vals{vals} {}
+
 Matrix::Matrix(const Matrix &M1): m{M1.m}, n{M1.n}, vals{M1.vals} {}
 
 void Matrix::random() {
     
     std::random_device rd;   // seed source
     std::mt19937 gen(rd());  // random number generator (Mersenne Twister)
-    std::uniform_real_distribution<> dis(-1.0, 1.0);  // range: [-1, 1]
+    std::uniform_real_distribution<> dis(-1,1);  // range: [-1, 1]
 
     for (int i = 0; i < m * n; ++i) {
         vals[i] = dis(gen);  // fill each element with a random double
@@ -29,11 +31,50 @@ void Matrix::random() {
 
 }
 
+Matrix ReLU(const Matrix &M) {
+    Matrix output(M.m, M.n);
+    for (int i = 0; i < M.m; ++i) {
+        for (int j = 0; j < M.n; ++j) {
+            output.vals[i * M.n + j] = std::max(0.0, M.vals[i * M.n + j]);
+        }
+    }
+    return output;
+}
+
+Matrix softmax(const Matrix& M) {
+    if (M.n != 1) {
+        std::cerr << "Softmax error: input is not a column vector.\n";
+        return {};
+    }
+
+    int size = M.m;
+    Matrix result(M.m, 1);
+
+    // To avoid overflow, subtract the max element
+    double max_val = M.vals[0];
+    for (int i = 1; i < size; ++i) {
+        if (M.vals[i] > max_val) max_val = M.vals[i];
+    }
+
+    double sum = 0.0;
+    for (int i = 0; i < size; ++i) {
+        result.vals[i] = std::exp(M.vals[i] - max_val);
+        sum += result.vals[i];
+    }
+
+    for (int i = 0; i < size; ++i) {
+        result.vals[i] /= sum;
+    }
+
+    return result;
+}
+
 void Matrix::zeroes() {
     for (int i = 0; i < m * n; ++i) {
         vals[i] = 0;  // fill each element with a random double
     }
 }
+
 
 Matrix dot(const Matrix &M1, const Matrix &M2) {
 

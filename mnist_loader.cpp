@@ -5,7 +5,7 @@
 using namespace std;
 
 
-Image::Image(vector<double> img, int label):img{img}, label{label} {}
+Image::Image(Matrix img, int label):img{img}, label{label} {}
 
 
 int read(ifstream &file) {
@@ -48,16 +48,8 @@ vector<Image> load_images(const string &img_path, const string &label_path) {
 
         unsigned char lbl_byte;
         lbl.read((char*) &lbl_byte, 1);
-        ds[i] = Image(pxls, lbl_byte);
-
-
+        ds[i] = Image(Matrix(cols*rows, 1, pxls), lbl_byte);
     }
-
     return ds;
-
-
-
-
-
 }
 

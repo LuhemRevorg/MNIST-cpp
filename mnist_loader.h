@@ -2,15 +2,16 @@
 
 #include <string>
 #include <vector>
+#include "Matrix.h"
 using namespace std;
 
 
 class Image {
     
     public:
-        vector<double> img;
+        Matrix img;
         int label;
-        Image(vector<double> img, int label);
+        Image(Matrix img, int label);
         Image() = default;
 
 };
