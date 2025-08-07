@@ -24,11 +24,13 @@ class Matrix {
         friend Matrix deriv_ReLU(const Matrix &M);
         friend Matrix one_hot(int label);
         friend Matrix operator-(const Matrix& M1, const Matrix& M2);
+        friend Matrix operator*(float num, const Matrix &M);
         Matrix(const Matrix& M1);
         Matrix transpose() const;
         void print(int precision = 8) const;
         void random();
         void zeroes();
+        int argmax();
 };
 
 Matrix dot(const Matrix &M1, const Matrix &M2);
@@ -40,3 +42,4 @@ Matrix elementwise(const Matrix &M1, const Matrix &M2);
 Matrix deriv_ReLU(const Matrix &M);
 Matrix one_hot(int label);
 Matrix operator-(const Matrix& M1, const Matrix& M2);
+Matrix operator*(float num, const Matrix &M);

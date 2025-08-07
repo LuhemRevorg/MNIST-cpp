@@ -1,7 +1,8 @@
 ########## Variables ##########
 
-CXX = g++
-CXXFLAGS = -std=c++20 -g -Wall -Werror=vla -MMD
+CXX = g++-15
+CXXFLAGS = -std=c++20 -O3 -Wall -Werror=vla -fopenmp -MMD
+LDFLAGS = -fopenmp
 EXEC = mnist
 
 SOURCES = $(wildcard *.cpp)
@@ -14,7 +15,7 @@ DEPENDS = $(OBJECTS:.o=.d)
 
 # Default target: build the executable
 $(EXEC): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJECTS) -o $@
 
 # Compile source files to object files
 %.o: %.cpp

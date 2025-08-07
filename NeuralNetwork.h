@@ -11,6 +11,7 @@ class NeuralNetwork {
         NeuralNetwork();
         Matrix forward(const Matrix &input);
         void backward(const Matrix &dz);
+        void apply(float batch_size, float lr);
 
 };
 

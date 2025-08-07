@@ -1,6 +1,8 @@
 #include "Matrix.h"
 #include <iostream>
 #include <random>
+#include <omp.h>
+#include <algorithm>
 using namespace std;
 
 Matrix::Matrix(int m, int n): m{m}, n{n}, vals{vector<double>(m*n)}{}
@@ -86,6 +88,7 @@ Matrix dot(const Matrix &M1, const Matrix &M2) {
     
     if (M1.n != M2.m) {cerr << "Issue with dot, order is wrong" << endl; return {};}
     Matrix result = Matrix(M1.m, M2.n);
+    #pragma omp parallel for
     for(int k =0; k < M1.m; ++k) {
         for(int j = 0; j < M2.n; ++j) {
             double val = 0.0;
@@ -169,5 +172,25 @@ Matrix operator-(const Matrix& M1, const Matrix& M2) {
     return result;
 }
 
+Matrix operator*(float num, const Matrix &M) {
+    Matrix result = Matrix(M.m,M.n);
+    for (int i = 0; i < M.m*M.n; ++i) {
+        result.vals[i] = M.vals[i] * num;
+    }
 
+    return result;
+
+}
+
+int Matrix::argmax() {
+    double max = -1e9;
+    int max_idx = 0;
+    for (int i = 0; i < m * n; ++i) {
+        if (vals[i] > max) {
+            max = vals[i];
+            max_idx = i;
+        }
+    }
+    return max_idx;
+}
 

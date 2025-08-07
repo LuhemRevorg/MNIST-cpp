@@ -18,7 +18,8 @@ class DenseLayer {
         DenseLayer(int input, int output);
         Matrix forward(const Matrix &input_layer);
         Matrix backward(const Matrix &dz);
-        void apply(float batch_size);
+        void apply(float batch_size, float lr);
+        Matrix out() {return output;}
 };
 
 
