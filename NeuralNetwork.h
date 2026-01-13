@@ -12,6 +12,8 @@ class NeuralNetwork {
         Matrix forward(const Matrix &input);
         void backward(const Matrix &dz);
         void apply(float batch_size, float lr);
+        void zero_gradients();
+        void accumulate_gradients(const NeuralNetwork& other); 
 
 };
 

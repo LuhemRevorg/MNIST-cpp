@@ -28,3 +28,12 @@ void NeuralNetwork::apply(float batch_size, float lr) {
     l2.apply(batch_size, lr);
 }
 
+void NeuralNetwork::zero_gradients() {
+    l1.zero_gradients();
+    l2.zero_gradients();
+}
+
+void NeuralNetwork::accumulate_gradients(const NeuralNetwork& other) {
+    l1.accumulate_gradients(other.l1);
+    l2.accumulate_gradients(other.l2);
+}

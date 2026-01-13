@@ -36,3 +36,13 @@ void DenseLayer::apply(float batch_size, float lr) {
     
 
 }
+
+void DenseLayer::zero_gradients() {
+    dw.zeroes();
+    db.zeroes();
+}
+
+void DenseLayer::accumulate_gradients(const DenseLayer& other) {
+    dw = dw + other.dw;
+    db = db + other.db;
+}

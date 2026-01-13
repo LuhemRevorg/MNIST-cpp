@@ -20,6 +20,8 @@ class DenseLayer {
         Matrix backward(const Matrix &dz);
         void apply(float batch_size, float lr);
         Matrix out() {return output;}
+        void zero_gradients();
+        void accumulate_gradients(const DenseLayer& other);
 };
 
 
